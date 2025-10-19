@@ -1,0 +1,63 @@
+.logo_GB{
+    margin-left: 30px;
+    width: 150px;
+}
+.bg-dark-own{
+    background-color: black;
+    height: 111px;
+}
+.sub-bg-dark-own{
+    height: auto;
+    font-size: 20px;
+    width: 270px;
+}
+.item-dark-own{
+    font-size: 20px;
+    color: #000000;
+    text-decoration: none;
+    height: 110px;
+    display: flex;
+    width: 170px;
+    justify-content: center;
+    align-items: center;
+}
+.item-down-own:hover{
+    border: 2px solid transparent; /* Grosor y color transparente */
+    border-image: linear-gradient(to right, #2A7B9B, #57C785, #EDDD53);
+    border-image-slice: 1; /* ¡Importante! */
+    box-sizing: border-box;
+}
+.nav-item:hover{
+    border: 2px solid transparent; /* Grosor y color transparente */
+    border-image: linear-gradient(to right, #2A7B9B, #57C785, #EDDD53);
+    border-image-slice: 1; /* ¡Importante! */
+    box-sizing: border-box;
+}
+.account-item{
+    width: 100px;
+}
+.account-item .fas{
+    font-size: 30px;
+}
+.searchBar{
+    display: flex;
+    margin-right: 30px;
+}
+.searchBar input{
+    width: 600px;
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    padding-left: 10px;
+}
+.counter{
+    background-color: red;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+}

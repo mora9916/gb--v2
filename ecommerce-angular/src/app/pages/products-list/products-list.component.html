@@ -1,0 +1,24 @@
+<div class="product-main">
+<div class="product-list">
+  <div class="row row-cols-lg-4">
+      @for (product of productosFiltrados; track product) {
+        <div class="col">
+          <div class="card mb-3 card-own">
+            <img src="{{product.image}}"  class="item-img" alt="{{product.name}}" (click)="swProductDetails(product.id)">
+            <div class="card-body card-size">
+              <h5 class="card-title centrar">{{product.brand + " " + product.name}}</h5>
+              <p class="card-text centrar">{{product.price | currency}} USD</p>
+              <div class="actions">
+                <button class="btn-own-style btn-cart" (click)="swProductDetails(product.id)">VIEW</button>&nbsp;
+                @if ( !checkCart(product.id) ) {
+                  <button class="btn-cart" (click)="addToCart(product.id)">ADD TO CART &nbsp;<i class="fas fa-cart-plus" style="color: #fefefe;"></i></button>
+                }@else{
+                  <button class="btn-viewCart" (click)="viewCart()">VIEW CART &nbsp;<i class="fas fa-cart-plus" style="color: #fefefe;"></i></button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+  </div>
+</div>
