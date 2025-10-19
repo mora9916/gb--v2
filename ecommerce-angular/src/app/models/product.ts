@@ -9,4 +9,3 @@ export interface Product {
     descripcion: string;
     image: string;
 }
-// esta es una prueba para ver si se está yendo a la nueva rama pruebas
