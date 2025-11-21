@@ -29,7 +29,7 @@ jobs:
               run: npm ci
 
             - name: Ejecutar pruebas unitarias
-              run: npm run test -- --include="src/app/core/guards/auth/auth.guard.spec.ts" --browsers=ChromeHeadless --code-coverage 
+              run: npm run test -- --include="src/app/core/guards/auth/auth.guard.spec.ts" --browsers=ChromeHeadless --code-coverage --watch=false
 
             - name: Compilar proyecto
               run: npm run build
