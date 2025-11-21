@@ -14,7 +14,7 @@ describe('Register and login', () => {
     cy.visit('/register');
 
     cy.get('#displayName').type(`cypress ${timestamp}`);
-    // cy.get('input[placeholder="Darktortilla"]')
+    // cy.get('input[id="displayName"]')
     cy.get('#dateOfBirth').type('1990-01-01');
     cy.get('#email').type(emailTest);
     cy.get('#phone').type('1234567890');
