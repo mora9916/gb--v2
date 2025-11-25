@@ -3,10 +3,16 @@ import { HomeComponent } from './components/home/home.component';
 import { ProductsListComponent } from './pages/products-list/products-list.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { ProductDetailsComponent } from './pages/product-details/product-details.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
     {path: 'home', component: HomeComponent},
     {path: 'cart', component: CartComponent},
+    {path: 'login', component: LoginComponent},
+    // {
+    //     path: 'login', loadComponent:() => import('../app/pages/login/login.component').then(c=>c.LoginComponent),
+    //     title: 'login'
+    // },
     
     // Ruta para ver los detalles de un producto
     {path:'product/:id', component:ProductDetailsComponent},
@@ -18,6 +24,6 @@ export const routes: Routes = [
     
     // Path comodines por en caso de teclaer una ruta incorrecta
     // redirige a la ruta de inicio
-    {path: '', redirectTo: '/home', pathMatch: 'full'},
-    {path: '**', redirectTo: '/home', pathMatch: 'full'}
+    {path: '', redirectTo: 'home', pathMatch: 'full'},
+    {path: '**', redirectTo: 'home', pathMatch: 'full'}
 ];
