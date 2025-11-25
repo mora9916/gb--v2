@@ -106,3 +106,6 @@ MongoDB / Mongoose
 JSON Web Tokens (JWT)
 Nodemon (desarrollo)
 Postman (para pruebas)
+
+# ESTA ES UNA PRUEBA SOLO PARA EL STAGEG TEST
+# Olvidé hacer este cambio
