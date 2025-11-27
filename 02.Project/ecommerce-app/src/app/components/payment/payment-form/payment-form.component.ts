@@ -16,6 +16,14 @@ export class PaymentFormComponent implements OnChanges {
   @Input() isEditMode: boolean = false;
   @Output() paymentSaved = new EventEmitter<PaymentMethod>();
 
+  paymentTypes = [
+    { value: 'credit_card', label: 'Tarjeta de Crédito' },
+    { value: 'debit_card', label: 'Tarjeta de Débito' },
+    { value: 'paypal', label: 'PayPal' },
+    { value: 'bank_transfer', label: 'Transferencia Bancaria' },
+    { value: 'cash_on_delivery', label: 'Pago Contra Entrega' }
+  ];
+
   paymentForm: FormGroup;
   
   private formErrorService = inject(FormErrorService);
@@ -25,8 +33,15 @@ export class PaymentFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['payment'] && this.payment) {
-      this.populateForm();
+    if (changes['payment']) {
+      if (this.payment) {
+        this.populateForm();
+        this.paymentForm.get('type')?.disable();
+      } else {
+        this.paymentForm.reset();
+        this.paymentForm.patchValue({ type: '' });
+        this.paymentForm.get('type')?.enable();
+      }
     }
   }
 
@@ -37,7 +52,8 @@ export class PaymentFormComponent implements OnChanges {
       cardHolderName: [''],
       expiryDate: [''],
       paypalEmail: ['', [Validators.email]],
-      bankAccount: [''],
+      bankName: [''],
+      accountNumber: [''],
       cashDetails: ['']
     });
   }
@@ -74,6 +90,7 @@ export class PaymentFormComponent implements OnChanges {
     }
 
     const form = this.paymentForm.value;
+    console.log(form)
     const formData: PaymentMethod = {
       _id: this.payment?._id ?? '',
       type: form.type,
@@ -81,12 +98,12 @@ export class PaymentFormComponent implements OnChanges {
       cardHolderName: form.cardHolderName || '',
       expiryDate: form.expiryDate || '',
       paypalEmail: form.paypalEmail || '',
-      bankName: form.bankAccount || '',
-      accountNumber: this.payment?.accountNumber || '',
+      bankName: form.bankName || '',
+      accountNumber: form.accountNumber || '',
       isDefault: this.payment?.isDefault ?? false,
       isActive: this.payment ? this.payment.isActive : true
     };
-
+    this.paymentForm.reset()
     this.paymentSaved.emit(formData);
   }
 }

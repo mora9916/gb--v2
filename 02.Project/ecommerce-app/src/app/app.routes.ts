@@ -39,5 +39,10 @@ export const routes: Routes = [
     loadChildren: () => import('../app/pages/user/user.routes').then(r=>r.USER_ROUTES),
     canActivate:[authGuard]
   },
+  {
+    path:'thank-you-page',
+    loadComponent:() => import('../app/pages/thank-you/thank-you.component').then(c=> c.ThankYouComponent)
+  }
+  
 
 ];
