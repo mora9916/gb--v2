@@ -33,4 +33,4 @@ app.listen(process.env.PORT, () => {
     console.log('Server running en http://localhost:'+process.env.PORT);
 });
 
-console.log('build actualizado');
+console.log('nuevo build generado', new Date());
