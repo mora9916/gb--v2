@@ -9,9 +9,9 @@
     </span>
   </div>
   <div class="aspect-square bg-gray-100 flex items-center justify-center">
-    @if (product.imageUrl) {
+    @if (product.imagesUrl) {
     <img
-      [src]="product.imageUrl"
+      [src]="product.imagesUrl"
       [alt]="product.name"
       class="w-full h-full object-cover"
     />
@@ -32,7 +32,8 @@
     }
   </div>
   <div class="p-4">
-    <a class="text-xs text-blue-600 font-medium line-clamp-1 cursor-pointer">{{
+    <a class="text-ms text-gray-600 font-bold line-clamp-1 cursor-pointer">{{ product.brand }} - </a>
+    <a class="text-xs text-blue-500 font-medium line-clamp-1 cursor-pointer">{{
       product.category.name
     }}</a>
 

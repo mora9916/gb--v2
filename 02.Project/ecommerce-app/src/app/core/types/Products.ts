@@ -5,10 +5,11 @@ export type Product = {
   _id:string;
   name: string;
   description: string;
+  brand: string;
   price: number;
   offer: number;
   stock: number;
-  imageUrl: string;
+  imagesUrl: string;
   category: Category;
 };
 export type ProductResponse = {
@@ -26,8 +27,9 @@ export const cartProductSchema = z.object({
     _id: z.string(),
     name: z.string(),
     description: z.string().optional(),
+    brand: z.string().optional(),
     price: z.number(),
-    imageUrl: z.string().optional(),
+    imagesUrl: z.string().optional(),
     stock: z.number(),
     category: z.string(),
 });

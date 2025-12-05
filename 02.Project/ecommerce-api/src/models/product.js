@@ -11,6 +11,11 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  brand: {
+    type: String,
+    requied: true,
+    trim: true
+  },
   price: {
     type: Number,
     required: true,
@@ -27,7 +32,7 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-  imageUrl: {
+  imagesUrl: {
     type: String,
     default: 'https://placehold.co/800x600.png',
     trim: true,
