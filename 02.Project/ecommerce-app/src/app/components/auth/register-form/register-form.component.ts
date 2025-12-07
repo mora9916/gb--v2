@@ -14,11 +14,12 @@ import { catchError, debounceTime, of, switchMap } from 'rxjs';
 import { FormFieldComponent } from '../../shared/form-field/form-field.component';
 import * as AuthActions from '../../../core/store/auth/auth.actions';
 import { Store } from '@ngrx/store';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-register-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormFieldComponent],
+  imports: [ReactiveFormsModule, FormFieldComponent, RouterLink],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.css',
 })
@@ -33,42 +34,42 @@ export class RegisterFormComponent {
       label: 'Nombre de usuario',
       fieldId: 'displayName',
       type: 'text',
-      placeholder: 'DarkTortilla',
+      placeholder: 'Escribe tu usuario',
       required: true,
     },
     {
-      label: 'fecha de nacimiento',
+      label: 'Fecha de nacimiento',
       fieldId: 'dateOfBirth',
       type: 'date',
       placeholder: 'DD/MM/YYYY',
       required: true,
     },
     {
-      label: 'email',
+      label: 'Email',
       fieldId: 'email',
       type: 'email',
-      placeholder: 'example@example.com',
+      placeholder: 'Escribe un correo',
       required: true,
     },
     {
-      label: 'telefono',
+      label: 'Teléfono',
       fieldId: 'phone',
       type: 'text',
-      placeholder: '1234567890',
+      placeholder: 'Escribe tu teléfono a 10 digitos',
       required: true,
     },
     {
-      label: 'contraseña',
+      label: 'Contraseña',
       fieldId: 'password',
       type: 'password',
-      placeholder: '*******',
+      placeholder: 'Crea una contraseña ',
       required: true,
     },
     {
-      label: 'repetir contraseña',
+      label: 'Confirmar contraseña',
       fieldId: 'repeatPassword',
       type: 'password',
-      placeholder: '*******',
+      placeholder: 'Vuelve a escribir tu contraseña',
       required: true,
     },
   ];

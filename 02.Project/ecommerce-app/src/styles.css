@@ -1,4 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { height: 100%;}
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #171717;
+    color: #ffffff;
+}
+.gb-bg-color{
+    background-color: #171717;
+}
+.gb-main-bg-color{
+    background-color: rgb(185, 156, 55);
+}
+.gb-main-bg-color:hover{
+    background-color: rgb(160, 127, 6);
+}
+.gb-main-color{
+    color: rgb(185, 156, 55);
+}
+.gb-bg-main-color:hover{
+    background-color: rgb(160, 127, 6);
+}
+.form-shadow {
+  box-shadow: transparent 0px 0px 1px 1px;
+  transition: all 0.4s ease-in-out;
+}
+.form-shadow:hover {
+  box-shadow: rgb(185, 156, 55) 0px 0px 4px 2px;
+}
