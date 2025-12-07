@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Carpetas de respaldo del proyecto
+02.Project/bk-project
