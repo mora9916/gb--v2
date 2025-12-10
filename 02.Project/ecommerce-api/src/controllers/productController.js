@@ -152,6 +152,7 @@ async function searchProducts(req, res, next) {
     if (q) {
       filters.$or = [
         { name: { $regex: q, $options: "i" } },
+        { brand: { $regex: q, $options: "i" } },
         { description: { $regex: q, $options: "i" } },
       ];
     }
