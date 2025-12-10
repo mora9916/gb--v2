@@ -5,8 +5,8 @@ import { Product, ProductResponse } from '../../types/Products';
 
 export type filters = {
   q: string;
-  minPrice?: number | undefined;
-  maxPrice?: number | undefined;
+  // minPrice?: number | undefined;
+  // maxPrice?: number | undefined;
 };
 
 @Injectable({
@@ -31,12 +31,12 @@ export class ProductsService {
     let filters:filters ={
       q:searchConfig.q
     }
-    if (searchConfig.minPrice) {
-      filters.minPrice = searchConfig.minPrice;
-    }
-    if (searchConfig.maxPrice) {
-      filters.maxPrice = searchConfig.maxPrice;
-    }
+    // if (searchConfig.minPrice) {
+    //   filters.minPrice = searchConfig.minPrice;
+    // }
+    // if (searchConfig.maxPrice) {
+    //   filters.maxPrice = searchConfig.maxPrice;
+    // }
     const params = new HttpParams({fromObject: filters});
     return this.httpClient.get<ProductResponse>(`${this.baseUrl}/search`, {params}).pipe(
       map(response=>{
