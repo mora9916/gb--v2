@@ -23,10 +23,8 @@ export type carouselImages =  {
 })
 export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
   @Input() images: carouselImages = [
-    { src: 'images/bread.jpg', loaded: false, loading: false, alt: '' },
-    { src: 'images/esp32.jpg', loaded: false, loading: false, alt: '' },
-    { src: 'images/fruta.jpg', loaded: false, loading: false, alt: '' },
-    { src: 'images/silksong.jpg', loaded: false, loading: false, alt: '' },
+    { src: 'IMG/Cuetec/SVB-G2-Banner.png', loaded: false, loading: false, alt: '' },
+    { src: 'IMG/Cuetec/CYNERGY-X-BANNER.png', loaded: false, loading: false, alt: '' }
   ];
 
   @Input() autoPlay: boolean = true;

@@ -1,10 +1,10 @@
 <div
-  class="relative w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 mb-8 z-10"
+  class="relative w-full h-130 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 mb-8 z-10"
 >
-  <div class="relative h-64 md:h-80 lg:h-96">
+  <div class="relative w-full h-auto md:h-80 lg:h-96">
     @for(image of images; track $index){
     <div
-      class="absolute inset-0 transition-opacity duration-500 ease-in-out"
+      class="absolute inset-0 h-130 transition-opacity duration-600 ease-in-out"
       [class.opacity-100]="$index === currentIndex"
       [class.opacity-0]="$index !== currentIndex"
     >
