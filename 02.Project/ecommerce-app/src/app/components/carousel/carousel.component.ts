@@ -86,7 +86,7 @@ export class CarouselComponent implements OnInit, OnChanges, OnDestroy {
       setTimeout(() => {
         this.images[index].loaded = true;
         this.images[index].loading = false;
-      }, 1000);
+      },100);
     };
     img.src = this.images[index].src;
   }
