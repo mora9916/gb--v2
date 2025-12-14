@@ -100,15 +100,15 @@ async function createProduct(req, res) {
 async function updateProduct(req, res) {
   try {
     const id = req.params.id;
-    const { name, description, brand, price, stock, imagesUrl, category } = req.body;
+    const { name, description, brand, price, stock, imagesUrl, category, date } = req.body;
 
-    if (!name || !description || !brand || !price || !stock || !imagesUrl || !category) {
+    if (!name || !description || !brand || !price || !stock || !imagesUrl || !category || date) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, description, brand, price, stock, imagesUrl, category },
+      { name, description, brand, price, stock, imagesUrl, category, date },
       { new: true }
     );
 
