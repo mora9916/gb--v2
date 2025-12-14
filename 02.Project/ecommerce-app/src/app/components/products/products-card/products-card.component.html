@@ -1,5 +1,5 @@
 <div
-  class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+  class="rounded-lg text-white shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden product-card"
   data-cy="product-card"
   [attr.data-cy-product-id]="product._id"
 >
@@ -32,29 +32,29 @@
     }
   </div>
   <div class="p-4">
-    <a class="text-ms text-gray-600 font-bold line-clamp-1 cursor-pointer">{{ product.brand }} - </a>
-    <a class="text-xs text-blue-500 font-medium line-clamp-1 cursor-pointer">{{
+    <a class="text-lg text-neutral-300 font-semibold line-clamp-1 cursor-pointer">{{ product.brand }}</a>
+    <a class="text- gb-main-color font-medium line-clamp-1 cursor-pointer">{{
       product.category.name
     }}</a>
 
-    <h3 class="font-semibold text-gray-900 mt-1 mb-2 line-clamp-1">
+    <h3 class="text-white mt-1 mb-2 text-md line-clamp-1 underline cursor-pointer" data-cy="product-name">
       {{ product.name }}
     </h3>
 
-    <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+    <!-- <p class="text-gray-600 text-sm mb-3 line-clamp-2">
       {{ product.description }}
-    </p>
+    </p> -->
 
     <div class="mb-4">
-      <span class="text-xl font-bold text-gray-900">{{ product.price }}</span>
-      <div class="text-xs text-gray-500 mt-1">Stock: {{ product.stock }}</div>
+      <span class="text-xl font-bold text-white">${{ product.price }} USD</span>
+      <div class="text-xs text-gray-500 mt-1">{{ product.stock }} disponibles</div>
     </div>
 
     <div class="flex gap-2">
       <a
         routerLink=""
         [routerLink]="['/product-view', product._id]"
-        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+        class="flex-1 border border-amber-300 hover:bg-amber-300 text-white font-bold py-2 px-4 rounded-md transition-colors"
         data-cy="view-product-btn"
       >
         Ver más
@@ -64,8 +64,8 @@
         [disabled]="product.stock === 0"
         [class]="
           product.stock === 0
-            ? 'bg-gray-300 text-gray-500'
-            : 'bg-green-600 hover:bg-green-700 text-white'
+            ? 'bg-gray-100 text-white font-bold'
+            : 'border-amber-300 border hover:bg-amber-400 text-white font-bold'
         "
         class="px-4 py-2 rounded-md transition-colors disabled:bg-gray-300"
         [disabled]="loading"

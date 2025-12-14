@@ -2,11 +2,16 @@
 @import "tailwindcss";
 html, body { height: 100%;}
 body { 
-    margin: 0; 
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    margin: 0;
     background-color: #171717;
     color: #ffffff;
 }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+h1,h2,h3,h4,h5,h6{
+    font-family: 'Noto Serif', serif;
+}
+
 .gb-bg-color{
     background-color: #171717;
 }
@@ -14,7 +19,9 @@ body {
     background-color: rgb(185, 156, 55);
 }
 .gb-main-bg-color:hover{
-    background-color: rgb(160, 127, 6);
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid rgb(185, 156, 55);
 }
 .gb-main-color{
     color: rgb(185, 156, 55);
@@ -28,4 +35,21 @@ body {
 }
 .form-shadow:hover {
   box-shadow: rgb(185, 156, 55) 0px 0px 4px 2px;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-container {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item {
+  padding: 0.5rem;
 }

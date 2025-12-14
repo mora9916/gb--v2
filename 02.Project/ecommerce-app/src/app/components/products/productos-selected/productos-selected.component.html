@@ -1,18 +1,29 @@
-<div class="relative w-full mx-auto">
+<div class="relative w-full mx-auto px-8">
   @if (products.length > 0) {
-    <div class="overflow-hidden">
-      <div class="carousel-container" [style.transform]="'translateX(-' + (currentIndex * (100 / visibleCards)) + '%)'">
-        @for (product of products; track product._id) {
-          <div class="carousel-item">
+    <div 
+      class="overflow-hidden" 
+      #carouselContainer 
+      (wheel)="onScroll($event)"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()"
+    >
+      <div 
+        class="carousel-container" 
+        #carouselInner
+        [style.transform]="'translateX(-' + (currentIndex * (100 / visibleCards)) + '%)'"
+        [style.transition]="disableTransition ? 'none' : 'transform 0.3s ease-in-out'"
+      >
+        @for (product of products; track $index) {
+          <div class="carousel-item shrink-0" [style.width.%]="100 / visibleCards">
             <app-products-card [product]="product"></app-products-card>
           </div>
         }
       </div>
     </div>
 
-    @if (showControls && products.length > visibleCards) {
+    @if (showControls && originalProducts.length > visibleCards) {
       <button
-        class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-10"
+        class="absolute left-0 top-1/2 transform -translate-y-1/2 gb-main-color p-2 shadow-lg hover:bg-neutral-800 transition-all duration-200 hover:scale-110 z-10"
         (click)="prevProduct()"
         [disabled]="currentIndex === 0"
       >
@@ -22,9 +33,9 @@
       </button>
 
       <button
-        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-10"
+        class="absolute right-0 top-1/2 transform -translate-y-1/2 gb-main-color p-2 shadow-lg transition-all duration-200 hover:bg-neutral-800 hover:scale-110 z-10"
         (click)="nextProduct()"
-        [disabled]="currentIndex >= products.length - visibleCards"
+        [disabled]="currentIndex >= (originalProducts.length - visibleCards)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -32,7 +43,7 @@
       </button>
     }
 
-    @if (showIndicators && products.length > visibleCards) {
+    @if (showIndicators && originalProducts.length > visibleCards) {
       <div class="flex justify-center mt-4 space-x-2">
         @for (i of indicatorArray; track i) {
           <button

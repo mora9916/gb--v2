@@ -1,5 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { Product } from '../../../core/types/Products';
+import { Component, ViewChild, ElementRef, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductsCardComponent } from '../products-card/products-card.component';
 import { ProductsService } from '../../../core/services/products/products.service';
@@ -11,28 +10,132 @@ import { ProductsService } from '../../../core/services/products/products.servic
   templateUrl: './productos-selected.component.html',
   styleUrl: './productos-selected.component.css'
 })
-export class ProductosSelectedComponent implements OnInit, OnDestroy {
-  products: Product[] = [];
-  autoPlay: boolean = true;
-  showIndicators: boolean = true;
-  showControls: boolean = true;
-  interval: number = 7000;
-
-  currentIndex = 0;
-  visibleCards = 5; // Default for large screens
-  private isDestroyed: boolean = false;
-  private autoPlayInterval?: number;
+export class ProductosSelectedComponent implements OnInit {
+  @ViewChild('carouselContainer') carouselContainer!: ElementRef;
+  @ViewChild('carouselInner') carouselInner!: ElementRef;
+  
+  currentIndex: number = 0; // Initialize
+  visibleCards: number = 3; // Example default value, adjust as needed
+  showControls: boolean = true; // Initialize
+  showIndicators: boolean = true; // Initialize
+  products: any[] = []; // Initialize if not already
+  public originalProducts: any[] = []; // Initialize as empty array
+  private autoPlayInterval: any;
+  private autoPlayDelay = 5000;
+  isUserInteracting = false;
+  disableTransition: boolean = false; // Initialize
+  indicatorArray: number[] = []; // Initialize
 
   constructor(private productsService: ProductsService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    // Initialize properties here if needed, e.g., this.originalProducts = ...;
     this.updateVisibleCards();
     this.loadProducts();
+    // Update indicatorArray based on originalProducts.length / visibleCards
+    this.updateIndicators();
   }
 
-  ngOnDestroy(): void {
-    this.isDestroyed = true;
+  loadProducts() {
+    this.productsService.getProducts().subscribe({
+      next: (data: any) => {
+        this.originalProducts = data.products;
+        this.setupInfiniteCarousel();
+        this.startAutoPlay();
+      },
+      error: (error: any) => {
+        console.error('Error cargando productos:', error);
+      }
+    });
+  }
+
+  setupInfiniteCarousel() {
+    // Duplicar los productos para crear el efecto infinito
+    if (this.originalProducts) {
+      this.products = [...this.originalProducts, ...this.originalProducts];
+    }
+  }
+
+  ngOnDestroy() {
     this.stopAutoPlay();
+  }
+
+  startAutoPlay() {
+    this.stopAutoPlay();
+    this.autoPlayInterval = setInterval(() => {
+      if (!this.isUserInteracting) {
+        this.currentIndex++;
+
+        // Cuando llegamos al final, resetear sin transición visible
+        if (this.originalProducts && this.currentIndex >= this.originalProducts.length) {
+          setTimeout(() => {
+            this.disableTransition = true;
+            this.currentIndex = 0;
+            
+            // Re-habilitar transición después del salto instantáneo
+            setTimeout(() => {
+              this.disableTransition = false;
+            }, 50);
+          }, 300);
+        }
+      }
+    }, this.autoPlayDelay);
+  }
+
+  stopAutoPlay() {
+    if (this.autoPlayInterval) {
+      clearInterval(this.autoPlayInterval);
+    }
+  }
+
+  onScroll(event: WheelEvent) {
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+      event.preventDefault();
+    }
+    
+    this.isUserInteracting = true;
+    this.stopAutoPlay();
+  }
+
+  onMouseEnter() {
+    this.isUserInteracting = true;
+    this.stopAutoPlay();
+  }
+
+  onMouseLeave() {
+    this.isUserInteracting = false;
+    this.startAutoPlay();
+  }
+
+  prevProduct() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  nextProduct() {
+    this.currentIndex++;
+
+    if (this.originalProducts && this.currentIndex >= this.originalProducts.length) {
+      setTimeout(() => {
+        this.disableTransition = true;
+        this.currentIndex = 0;
+        
+        setTimeout(() => {
+          this.disableTransition = false;
+        }, 50);
+      }, 300);
+    }
+  }
+
+  goToProduct(index: number) {
+    this.isUserInteracting = true;
+    this.currentIndex = index;
+    this.startAutoPlay();
+  }
+
+  private updateIndicators() {
+    this.indicatorArray = Array.from({ length: Math.ceil(this.originalProducts.length / this.visibleCards) }, (_, i) => i);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -40,75 +143,14 @@ export class ProductosSelectedComponent implements OnInit, OnDestroy {
     this.updateVisibleCards();
   }
 
-  private updateVisibleCards() {
+  updateVisibleCards() {
     const width = window.innerWidth;
-    if (width < 768) {
+    if (width < 640) {
       this.visibleCards = 1;
     } else if (width < 1024) {
       this.visibleCards = 3;
     } else {
       this.visibleCards = 5;
     }
-  }
-
-  private loadProducts() {
-    this.productsService.getProducts(1, 15).subscribe({
-      next: (response) => {
-        this.products = response.products;
-        if (this.products.length > this.visibleCards && this.autoPlay) {
-          this.startAutoPlay();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading products:', error);
-      }
-    });
-  }
-
-  private startAutoPlay() {
-    if (this.autoPlay && !this.isDestroyed && this.products.length > this.visibleCards) {
-      this.autoPlayInterval = window.setInterval(() => {
-        this.nextProduct();
-      }, this.interval);
-    }
-  }
-
-  private stopAutoPlay() {
-    if (this.autoPlayInterval) {
-      clearInterval(this.autoPlayInterval);
-      this.autoPlayInterval = undefined;
-    }
-  }
-
-  nextProduct() {
-    if (this.currentIndex < this.products.length - this.visibleCards) {
-      this.currentIndex++;
-    } else {
-      this.currentIndex = 0;
-    }
-  }
-
-  prevProduct() {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-    } else {
-      this.currentIndex = this.products.length - this.visibleCards;
-    }
-  }
-
-  goToProduct(index: number) {
-    this.currentIndex = index;
-  }
-
-  get visibleProducts(): Product[] {
-    return this.products.slice(this.currentIndex, this.currentIndex + this.visibleCards);
-  }
-
-  get totalIndicators(): number {
-    return Math.max(0, this.products.length - this.visibleCards + 1);
-  }
-
-  get indicatorArray(): number[] {
-    return Array.from({ length: this.totalIndicators }, (_, i) => i);
   }
 }

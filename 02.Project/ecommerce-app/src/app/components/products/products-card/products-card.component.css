@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+h3{
+    font-family: 'Sansation', sans-serif;
+}
+.product-card{
+    box-shadow: 0px 1px 1px 1px rgb(185, 156, 55);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover{
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 1px 1px rgb(185, 156, 55);
+}

@@ -1,0 +1,6 @@
+.title-section {
+    border-bottom: 1px solid rgb(185, 156, 55);
+}
+.btn:hover{
+    border: 1px solid rgb(185, 156, 55);
+}
