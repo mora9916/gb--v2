@@ -40,5 +40,17 @@ export class HomeComponent {
     }, 2000)
   })
  
+  misCategorias = [
+    { img: 'images/categories/playing-cues.png', title: 'Cues' },
+    { img: 'images/categories/cue-cases.png', title: 'Cue Cases' },
+    { img: 'images/categories/gloves.png', title: 'Gloves' },
+    { img: 'images/categories/accesories.png', title: 'Accesories' },
+  ];
+
+  misServicios = [
+    { img: 'images/categories/playing-cues.png', title: 'Cues' },
+    { img: 'images/categories/cue-cases.png', title: 'Cue Cases' },
+    { img: 'images/categories/gloves.png', title: 'Gloves' },
+  ]
 
 }
