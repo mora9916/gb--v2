@@ -4,11 +4,13 @@ import { map, Observable } from 'rxjs';
 import { SearchProductsComponent } from '../../components/products/search-products/search-products.component';
 import { ProductosSelectedComponent } from '../../components/products/productos-selected/productos-selected.component';
 import { RouterLink } from "@angular/router";
+import { ImageBannerComponent } from '../../components/shared/image-banner/image-banner.component';
+import { ImagesSectionComponent } from '../../components/shared/images-section/images-section.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CarouselComponent, SearchProductsComponent, ProductosSelectedComponent, RouterLink],
+  imports: [CarouselComponent, SearchProductsComponent, ProductosSelectedComponent, ImagesSectionComponent, ImageBannerComponent, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

@@ -1,1 +1,12 @@
-<p>image-banner works!</p>
+
+<div class="relative w-full h-full border border-amber-300 mt-30">
+    @for (image of images; track image.src) {
+        @if (image.loaded) {
+            <img
+                [src]="image.src"
+                [alt]="image.alt"
+                class="w-full h-auto object-cover"
+            />
+        }
+    }
+</div>
