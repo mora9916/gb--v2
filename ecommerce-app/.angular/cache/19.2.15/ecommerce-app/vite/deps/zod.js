@@ -52,6 +52,7 @@ __export(external_exports, {
   ZodKSUID: () => ZodKSUID,
   ZodLazy: () => ZodLazy,
   ZodLiteral: () => ZodLiteral,
+  ZodMAC: () => ZodMAC,
   ZodMap: () => ZodMap,
   ZodNaN: () => ZodNaN,
   ZodNanoID: () => ZodNanoID,
@@ -110,6 +111,7 @@ __export(external_exports, {
   date: () => date3,
   decode: () => decode2,
   decodeAsync: () => decodeAsync2,
+  describe: () => describe2,
   discriminatedUnion: () => discriminatedUnion,
   e164: () => e1642,
   email: () => email2,
@@ -154,9 +156,11 @@ __export(external_exports, {
   lowercase: () => _lowercase,
   lt: () => _lt,
   lte: () => _lte,
+  mac: () => mac2,
   map: () => map,
   maxLength: () => _maxLength,
   maxSize: () => _maxSize,
+  meta: () => meta2,
   mime: () => _mime,
   minLength: () => _minLength,
   minSize: () => _minSize,
@@ -202,6 +206,7 @@ __export(external_exports, {
   set: () => set,
   setErrorMap: () => setErrorMap,
   size: () => _size,
+  slugify: () => _slugify,
   startsWith: () => _startsWith,
   strictObject: () => strictObject,
   string: () => string2,
@@ -299,6 +304,7 @@ __export(core_exports2, {
   $ZodKSUID: () => $ZodKSUID,
   $ZodLazy: () => $ZodLazy,
   $ZodLiteral: () => $ZodLiteral,
+  $ZodMAC: () => $ZodMAC,
   $ZodMap: () => $ZodMap,
   $ZodNaN: () => $ZodNaN,
   $ZodNanoID: () => $ZodNanoID,
@@ -399,6 +405,7 @@ __export(core_exports2, {
   _lowercase: () => _lowercase,
   _lt: () => _lt,
   _lte: () => _lte,
+  _mac: () => _mac,
   _map: () => _map,
   _max: () => _lte,
   _maxLength: () => _maxLength,
@@ -440,6 +447,7 @@ __export(core_exports2, {
   _safeParseAsync: () => _safeParseAsync,
   _set: () => _set,
   _size: () => _size,
+  _slugify: () => _slugify,
   _startsWith: () => _startsWith,
   _string: () => _string,
   _stringFormat: () => _stringFormat,
@@ -471,6 +479,7 @@ __export(core_exports2, {
   config: () => config,
   decode: () => decode,
   decodeAsync: () => decodeAsync,
+  describe: () => describe,
   encode: () => encode,
   encodeAsync: () => encodeAsync,
   flattenError: () => flattenError,
@@ -481,6 +490,7 @@ __export(core_exports2, {
   isValidBase64URL: () => isValidBase64URL,
   isValidJWT: () => isValidJWT,
   locales: () => locales_exports,
+  meta: () => meta,
   parse: () => parse,
   parseAsync: () => parseAsync,
   prettifyError: () => prettifyError,
@@ -505,21 +515,29 @@ var NEVER = Object.freeze({
 });
 function $constructor(name, initializer3, params) {
   function init(inst, def) {
-    var _a;
-    Object.defineProperty(inst, "_zod", {
-      value: inst._zod ?? {},
-      enumerable: false
-    });
-    (_a = inst._zod).traits ?? (_a.traits = /* @__PURE__ */ new Set());
-    inst._zod.traits.add(name);
-    initializer3(inst, def);
-    for (const k in _.prototype) {
-      if (!(k in inst)) Object.defineProperty(inst, k, {
-        value: _.prototype[k].bind(inst)
+    if (!inst._zod) {
+      Object.defineProperty(inst, "_zod", {
+        value: {
+          def,
+          constr: _,
+          traits: /* @__PURE__ */ new Set()
+        },
+        enumerable: false
       });
     }
-    inst._zod.constr = _;
-    inst._zod.def = def;
+    if (inst._zod.traits.has(name)) {
+      return;
+    }
+    inst._zod.traits.add(name);
+    initializer3(inst, def);
+    const proto = _.prototype;
+    const keys = Object.keys(proto);
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      if (!(k in inst)) {
+        inst[k] = proto[k].bind(inst);
+      }
+    }
   }
   const Parent = params?.Parent ?? Object;
   class Definition extends Parent {
@@ -528,10 +546,10 @@ function $constructor(name, initializer3, params) {
     value: name
   });
   function _(def) {
-    var _a;
+    var _a2;
     const inst = params?.Parent ? new Definition() : this;
     init(inst, def);
-    (_a = inst._zod).deferred ?? (_a.deferred = []);
+    (_a2 = inst._zod).deferred ?? (_a2.deferred = []);
     for (const fn of inst._zod.deferred) {
       fn();
     }
@@ -627,6 +645,7 @@ __export(util_exports, {
   required: () => required,
   safeExtend: () => safeExtend,
   shallowClone: () => shallowClone,
+  slugify: () => slugify,
   stringifyPrimitive: () => stringifyPrimitive,
   uint8ArrayToBase64: () => uint8ArrayToBase64,
   uint8ArrayToBase64url: () => uint8ArrayToBase64url,
@@ -767,6 +786,9 @@ function randomString(length = 10) {
 function esc(str) {
   return JSON.stringify(str);
 }
+function slugify(input) {
+  return input.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+}
 var captureStackTrace = "captureStackTrace" in Error ? Error.captureStackTrace : (..._args) => {
 };
 function isObject(data) {
@@ -788,6 +810,7 @@ function isPlainObject(o) {
   if (isObject(o) === false) return false;
   const ctor = o.constructor;
   if (ctor === void 0) return true;
+  if (typeof ctor !== "function") return true;
   const prot = ctor.prototype;
   if (isObject(prot) === false) return false;
   if (Object.prototype.hasOwnProperty.call(prot, "isPrototypeOf") === false) {
@@ -1092,8 +1115,8 @@ function aborted(x, startIndex = 0) {
 }
 function prefixIssues(path, issues) {
   return issues.map((iss) => {
-    var _a;
-    (_a = iss).path ?? (_a.path = []);
+    var _a2;
+    (_a2 = iss).path ?? (_a2.path = []);
     iss.path.unshift(path);
     return iss;
   });
@@ -1273,7 +1296,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
     errors: []
   };
   const processError = (error47, path = []) => {
-    var _a, _b;
+    var _a2, _b;
     for (const issue2 of error47.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
         issue2.errors.map((issues) => processError({
@@ -1300,7 +1323,7 @@ function treeifyError(error46, mapper = (issue2) => issue2.message) {
           const terminal = i === fullpath.length - 1;
           if (typeof el === "string") {
             curr.properties ?? (curr.properties = {});
-            (_a = curr.properties)[el] ?? (_a[el] = {
+            (_a2 = curr.properties)[el] ?? (_a2[el] = {
               errors: []
             });
             curr = curr.properties[el];
@@ -1512,6 +1535,7 @@ __export(regexes_exports, {
   ipv6: () => ipv6,
   ksuid: () => ksuid,
   lowercase: () => lowercase,
+  mac: () => mac,
   md5_base64: () => md5_base64,
   md5_base64url: () => md5_base64url,
   md5_hex: () => md5_hex,
@@ -1571,6 +1595,10 @@ function emoji() {
 }
 var ipv4 = /^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])$/;
 var ipv6 = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))$/;
+var mac = (delimiter) => {
+  const escapedDelim = escapeRegex(delimiter ?? ":");
+  return new RegExp(`^(?:[0-9A-F]{2}${escapedDelim}){5}[0-9A-F]{2}$|^(?:[0-9a-f]{2}${escapedDelim}){5}[0-9a-f]{2}$`);
+};
 var cidrv4 = /^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\/([0-9]|[1-2][0-9]|3[0-2])$/;
 var cidrv6 = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|::|([0-9a-fA-F]{1,4})?::([0-9a-fA-F]{1,4}:?){0,6})\/(12[0-8]|1[01][0-9]|[1-9]?[0-9])$/;
 var base64 = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$/;
@@ -1635,10 +1663,10 @@ var sha512_base64url = fixedBase64url(86);
 
 // node_modules/zod/v4/core/checks.js
 var $ZodCheck = $constructor("$ZodCheck", (inst, def) => {
-  var _a;
+  var _a2;
   inst._zod ?? (inst._zod = {});
   inst._zod.def = def;
-  (_a = inst._zod).onattach ?? (_a.onattach = []);
+  (_a2 = inst._zod).onattach ?? (_a2.onattach = []);
 });
 var numericOriginMap = {
   number: "number",
@@ -1700,8 +1728,8 @@ var $ZodCheckGreaterThan = $constructor("$ZodCheckGreaterThan", (inst, def) => {
 var $ZodCheckMultipleOf = $constructor("$ZodCheckMultipleOf", (inst, def) => {
   $ZodCheck.init(inst, def);
   inst._zod.onattach.push((inst2) => {
-    var _a;
-    (_a = inst2._zod.bag).multipleOf ?? (_a.multipleOf = def.value);
+    var _a2;
+    (_a2 = inst2._zod.bag).multipleOf ?? (_a2.multipleOf = def.value);
   });
   inst._zod.check = (payload) => {
     if (typeof payload.value !== typeof def.value) throw new Error("Cannot mix number and bigint in multiple_of check.");
@@ -1825,9 +1853,9 @@ var $ZodCheckBigIntFormat = $constructor("$ZodCheckBigIntFormat", (inst, def) =>
   };
 });
 var $ZodCheckMaxSize = $constructor("$ZodCheckMaxSize", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -1851,9 +1879,9 @@ var $ZodCheckMaxSize = $constructor("$ZodCheckMaxSize", (inst, def) => {
   };
 });
 var $ZodCheckMinSize = $constructor("$ZodCheckMinSize", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -1877,9 +1905,9 @@ var $ZodCheckMinSize = $constructor("$ZodCheckMinSize", (inst, def) => {
   };
 });
 var $ZodCheckSizeEquals = $constructor("$ZodCheckSizeEquals", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -1912,9 +1940,9 @@ var $ZodCheckSizeEquals = $constructor("$ZodCheckSizeEquals", (inst, def) => {
   };
 });
 var $ZodCheckMaxLength = $constructor("$ZodCheckMaxLength", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -1939,9 +1967,9 @@ var $ZodCheckMaxLength = $constructor("$ZodCheckMaxLength", (inst, def) => {
   };
 });
 var $ZodCheckMinLength = $constructor("$ZodCheckMinLength", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -1966,9 +1994,9 @@ var $ZodCheckMinLength = $constructor("$ZodCheckMinLength", (inst, def) => {
   };
 });
 var $ZodCheckLengthEquals = $constructor("$ZodCheckLengthEquals", (inst, def) => {
-  var _a;
+  var _a2;
   $ZodCheck.init(inst, def);
-  (_a = inst._zod.def).when ?? (_a.when = (payload) => {
+  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -2002,7 +2030,7 @@ var $ZodCheckLengthEquals = $constructor("$ZodCheckLengthEquals", (inst, def) =>
   };
 });
 var $ZodCheckStringFormat = $constructor("$ZodCheckStringFormat", (inst, def) => {
-  var _a, _b;
+  var _a2, _b;
   $ZodCheck.init(inst, def);
   inst._zod.onattach.push((inst2) => {
     const bag = inst2._zod.bag;
@@ -2012,7 +2040,7 @@ var $ZodCheckStringFormat = $constructor("$ZodCheckStringFormat", (inst, def) =>
       bag.patterns.add(def.pattern);
     }
   });
-  if (def.pattern) (_a = inst._zod).check ?? (_a.check = (payload) => {
+  if (def.pattern) (_a2 = inst._zod).check ?? (_a2.check = (payload) => {
     def.pattern.lastIndex = 0;
     if (def.pattern.test(payload.value)) return;
     payload.issues.push(__spreadProps(__spreadValues({
@@ -2207,12 +2235,12 @@ var Doc = class {
 var version = {
   major: 4,
   minor: 1,
-  patch: 12
+  patch: 13
 };
 
 // node_modules/zod/v4/core/schemas.js
 var $ZodType = $constructor("$ZodType", (inst, def) => {
-  var _a;
+  var _a2;
   inst ?? (inst = {});
   inst._zod.def = def;
   inst._zod.bag = inst._zod.bag || {};
@@ -2227,7 +2255,7 @@ var $ZodType = $constructor("$ZodType", (inst, def) => {
     }
   }
   if (checks.length === 0) {
-    (_a = inst._zod).deferred ?? (_a.deferred = []);
+    (_a2 = inst._zod).deferred ?? (_a2.deferred = []);
     inst._zod.deferred?.push(() => {
       inst._zod.run = inst._zod.parse;
     });
@@ -2387,7 +2415,7 @@ var $ZodURL = $constructor("$ZodURL", (inst, def) => {
             code: "invalid_format",
             format: "url",
             note: "Invalid hostname",
-            pattern: hostname.source,
+            pattern: def.hostname.source,
             input: payload.value,
             inst,
             continue: !def.abort
@@ -2472,18 +2500,12 @@ var $ZodISODuration = $constructor("$ZodISODuration", (inst, def) => {
 var $ZodIPv4 = $constructor("$ZodIPv4", (inst, def) => {
   def.pattern ?? (def.pattern = ipv4);
   $ZodStringFormat.init(inst, def);
-  inst._zod.onattach.push((inst2) => {
-    const bag = inst2._zod.bag;
-    bag.format = `ipv4`;
-  });
+  inst._zod.bag.format = `ipv4`;
 });
 var $ZodIPv6 = $constructor("$ZodIPv6", (inst, def) => {
   def.pattern ?? (def.pattern = ipv6);
   $ZodStringFormat.init(inst, def);
-  inst._zod.onattach.push((inst2) => {
-    const bag = inst2._zod.bag;
-    bag.format = `ipv6`;
-  });
+  inst._zod.bag.format = `ipv6`;
   inst._zod.check = (payload) => {
     try {
       new URL(`http://[${payload.value}]`);
@@ -2497,6 +2519,11 @@ var $ZodIPv6 = $constructor("$ZodIPv6", (inst, def) => {
       });
     }
   };
+});
+var $ZodMAC = $constructor("$ZodMAC", (inst, def) => {
+  def.pattern ?? (def.pattern = mac(def.delimiter));
+  $ZodStringFormat.init(inst, def);
+  inst._zod.bag.format = `mac`;
 });
 var $ZodCIDRv4 = $constructor("$ZodCIDRv4", (inst, def) => {
   def.pattern ?? (def.pattern = cidrv4);
@@ -2539,9 +2566,7 @@ function isValidBase64(data) {
 var $ZodBase64 = $constructor("$ZodBase64", (inst, def) => {
   def.pattern ?? (def.pattern = base64);
   $ZodStringFormat.init(inst, def);
-  inst._zod.onattach.push((inst2) => {
-    inst2._zod.bag.contentEncoding = "base64";
-  });
+  inst._zod.bag.contentEncoding = "base64";
   inst._zod.check = (payload) => {
     if (isValidBase64(payload.value)) return;
     payload.issues.push({
@@ -2562,9 +2587,7 @@ function isValidBase64URL(data) {
 var $ZodBase64URL = $constructor("$ZodBase64URL", (inst, def) => {
   def.pattern ?? (def.pattern = base64url);
   $ZodStringFormat.init(inst, def);
-  inst._zod.onattach.push((inst2) => {
-    inst2._zod.bag.contentEncoding = "base64url";
-  });
+  inst._zod.bag.contentEncoding = "base64url";
   inst._zod.check = (payload) => {
     if (isValidBase64URL(payload.value)) return;
     payload.issues.push({
@@ -2645,7 +2668,7 @@ var $ZodNumber = $constructor("$ZodNumber", (inst, def) => {
     return payload;
   };
 });
-var $ZodNumberFormat = $constructor("$ZodNumber", (inst, def) => {
+var $ZodNumberFormat = $constructor("$ZodNumberFormat", (inst, def) => {
   $ZodCheckNumberFormat.init(inst, def);
   $ZodNumber.init(inst, def);
 });
@@ -2686,7 +2709,7 @@ var $ZodBigInt = $constructor("$ZodBigInt", (inst, def) => {
     return payload;
   };
 });
-var $ZodBigIntFormat = $constructor("$ZodBigInt", (inst, def) => {
+var $ZodBigIntFormat = $constructor("$ZodBigIntFormat", (inst, def) => {
   $ZodCheckBigIntFormat.init(inst, def);
   $ZodBigInt.init(inst, def);
 });
@@ -2868,7 +2891,7 @@ function handleCatchall(proms, input, payload, ctx, def, inst) {
   const keySet = def.keySet;
   const _catchall = def.catchall._zod;
   const t = _catchall.def.type;
-  for (const key of Object.keys(input)) {
+  for (const key in input) {
     if (keySet.has(key)) continue;
     if (t === "never") {
       unrecognized.push(key);
@@ -3262,7 +3285,6 @@ function handleIntersectionResults(result, left, right) {
 var $ZodTuple = $constructor("$ZodTuple", (inst, def) => {
   $ZodType.init(inst, def);
   const items = def.items;
-  const optStart = items.length - [...items].reverse().findIndex((item) => item._zod.optin !== "optional");
   inst._zod.parse = (payload, ctx) => {
     const input = payload.value;
     if (!Array.isArray(input)) {
@@ -3276,6 +3298,8 @@ var $ZodTuple = $constructor("$ZodTuple", (inst, def) => {
     }
     payload.value = [];
     const proms = [];
+    const reversedIndex = [...items].reverse().findIndex((item) => item._zod.optin !== "optional");
+    const optStart = reversedIndex === -1 ? 0 : items.length - reversedIndex;
     if (!def.rest) {
       const tooBig = input.length > items.length;
       const tooSmall = input.length < optStart - 1;
@@ -3349,11 +3373,13 @@ var $ZodRecord = $constructor("$ZodRecord", (inst, def) => {
       return payload;
     }
     const proms = [];
-    if (def.keyType._zod.values) {
-      const values = def.keyType._zod.values;
+    const values = def.keyType._zod.values;
+    if (values) {
       payload.value = {};
+      const recordKeys = /* @__PURE__ */ new Set();
       for (const key of values) {
         if (typeof key === "string" || typeof key === "number" || typeof key === "symbol") {
+          recordKeys.add(typeof key === "number" ? key.toString() : key);
           const result = def.valueType._zod.run({
             value: input[key],
             issues: []
@@ -3375,7 +3401,7 @@ var $ZodRecord = $constructor("$ZodRecord", (inst, def) => {
       }
       let unrecognized;
       for (const key in input) {
-        if (!values.has(key)) {
+        if (!recordKeys.has(key)) {
           unrecognized = unrecognized ?? [];
           unrecognized.push(key);
         }
@@ -3561,11 +3587,12 @@ var $ZodLiteral = $constructor("$ZodLiteral", (inst, def) => {
   if (def.values.length === 0) {
     throw new Error("Cannot create literal schema with no valid values");
   }
-  inst._zod.values = new Set(def.values);
+  const values = new Set(def.values);
+  inst._zod.values = values;
   inst._zod.pattern = new RegExp(`^(${def.values.map((o) => typeof o === "string" ? escapeRegex(o) : o ? escapeRegex(o.toString()) : String(o)).join("|")})$`);
   inst._zod.parse = (payload, _ctx) => {
     const input = payload.value;
-    if (inst._zod.values.has(input)) {
+    if (values.has(input)) {
       return payload;
     }
     payload.issues.push({
@@ -3882,8 +3909,8 @@ var $ZodReadonly = $constructor("$ZodReadonly", (inst, def) => {
   $ZodType.init(inst, def);
   defineLazy(inst._zod, "propValues", () => def.innerType._zod.propValues);
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
-  defineLazy(inst._zod, "optin", () => def.innerType._zod.optin);
-  defineLazy(inst._zod, "optout", () => def.innerType._zod.optout);
+  defineLazy(inst._zod, "optin", () => def.innerType?._zod?.optin);
+  defineLazy(inst._zod, "optout", () => def.innerType?._zod?.optout);
   inst._zod.parse = (payload, ctx) => {
     if (ctx.direction === "backward") {
       return def.innerType._zod.run(payload, ctx);
@@ -4034,10 +4061,10 @@ var $ZodPromise = $constructor("$ZodPromise", (inst, def) => {
 var $ZodLazy = $constructor("$ZodLazy", (inst, def) => {
   $ZodType.init(inst, def);
   defineLazy(inst._zod, "innerType", () => def.getter());
-  defineLazy(inst._zod, "pattern", () => inst._zod.innerType._zod.pattern);
-  defineLazy(inst._zod, "propValues", () => inst._zod.innerType._zod.propValues);
-  defineLazy(inst._zod, "optin", () => inst._zod.innerType._zod.optin ?? void 0);
-  defineLazy(inst._zod, "optout", () => inst._zod.innerType._zod.optout ?? void 0);
+  defineLazy(inst._zod, "pattern", () => inst._zod.innerType?._zod?.pattern);
+  defineLazy(inst._zod, "propValues", () => inst._zod.innerType?._zod?.propValues);
+  defineLazy(inst._zod, "optin", () => inst._zod.innerType?._zod?.optin ?? void 0);
+  defineLazy(inst._zod, "optout", () => inst._zod.innerType?._zod?.optout ?? void 0);
   inst._zod.parse = (payload, ctx) => {
     const inner = inst._zod.innerType;
     return inner._zod.run(payload, ctx);
@@ -5258,6 +5285,7 @@ var error9 = () => {
     duration: "ISO duration",
     ipv4: "IPv4 address",
     ipv6: "IPv6 address",
+    mac: "MAC address",
     cidrv4: "IPv4 range",
     cidrv6: "IPv6 range",
     base64: "base64-encoded string",
@@ -6126,117 +6154,357 @@ function fr_CA_default() {
 
 // node_modules/zod/v4/locales/he.js
 var error16 = () => {
+  const TypeNames = {
+    string: {
+      label: "מחרוזת",
+      gender: "f"
+    },
+    number: {
+      label: "מספר",
+      gender: "m"
+    },
+    boolean: {
+      label: "ערך בוליאני",
+      gender: "m"
+    },
+    bigint: {
+      label: "BigInt",
+      gender: "m"
+    },
+    date: {
+      label: "תאריך",
+      gender: "m"
+    },
+    array: {
+      label: "מערך",
+      gender: "m"
+    },
+    object: {
+      label: "אובייקט",
+      gender: "m"
+    },
+    null: {
+      label: "ערך ריק (null)",
+      gender: "m"
+    },
+    undefined: {
+      label: "ערך לא מוגדר (undefined)",
+      gender: "m"
+    },
+    symbol: {
+      label: "סימבול (Symbol)",
+      gender: "m"
+    },
+    function: {
+      label: "פונקציה",
+      gender: "f"
+    },
+    map: {
+      label: "מפה (Map)",
+      gender: "f"
+    },
+    set: {
+      label: "קבוצה (Set)",
+      gender: "f"
+    },
+    file: {
+      label: "קובץ",
+      gender: "m"
+    },
+    promise: {
+      label: "Promise",
+      gender: "m"
+    },
+    NaN: {
+      label: "NaN",
+      gender: "m"
+    },
+    unknown: {
+      label: "ערך לא ידוע",
+      gender: "m"
+    },
+    value: {
+      label: "ערך",
+      gender: "m"
+    }
+  };
   const Sizable = {
     string: {
-      unit: "אותיות",
-      verb: "לכלול"
+      unit: "תווים",
+      shortLabel: "קצר",
+      longLabel: "ארוך"
     },
     file: {
       unit: "בייטים",
-      verb: "לכלול"
+      shortLabel: "קטן",
+      longLabel: "גדול"
     },
     array: {
       unit: "פריטים",
-      verb: "לכלול"
+      shortLabel: "קטן",
+      longLabel: "גדול"
     },
     set: {
       unit: "פריטים",
-      verb: "לכלול"
+      shortLabel: "קטן",
+      longLabel: "גדול"
+    },
+    number: {
+      unit: "",
+      shortLabel: "קטן",
+      longLabel: "גדול"
     }
+    // no unit
   };
-  function getSizing(origin) {
+  const typeEntry = (t) => t ? TypeNames[t] : void 0;
+  const typeLabel = (t) => {
+    const e = typeEntry(t);
+    if (e) return e.label;
+    return t ?? TypeNames.unknown.label;
+  };
+  const withDefinite = (t) => `ה${typeLabel(t)}`;
+  const verbFor = (t) => {
+    const e = typeEntry(t);
+    const gender = e?.gender ?? "m";
+    return gender === "f" ? "צריכה להיות" : "צריך להיות";
+  };
+  const getSizing = (origin) => {
+    if (!origin) return null;
     return Sizable[origin] ?? null;
-  }
+  };
   const parsedType8 = (data) => {
     const t = typeof data;
     switch (t) {
-      case "number": {
+      case "number":
         return Number.isNaN(data) ? "NaN" : "number";
-      }
       case "object": {
-        if (Array.isArray(data)) {
-          return "array";
-        }
-        if (data === null) {
-          return "null";
-        }
+        if (Array.isArray(data)) return "array";
+        if (data === null) return "null";
         if (Object.getPrototypeOf(data) !== Object.prototype && data.constructor) {
           return data.constructor.name;
         }
+        return "object";
       }
+      default:
+        return t;
     }
-    return t;
   };
   const Nouns = {
-    regex: "קלט",
-    email: "כתובת אימייל",
-    url: "כתובת רשת",
-    emoji: "אימוג'י",
-    uuid: "UUID",
-    uuidv4: "UUIDv4",
-    uuidv6: "UUIDv6",
-    nanoid: "nanoid",
-    guid: "GUID",
-    cuid: "cuid",
-    cuid2: "cuid2",
-    ulid: "ULID",
-    xid: "XID",
-    ksuid: "KSUID",
-    datetime: "תאריך וזמן ISO",
-    date: "תאריך ISO",
-    time: "זמן ISO",
-    duration: "משך זמן ISO",
-    ipv4: "כתובת IPv4",
-    ipv6: "כתובת IPv6",
-    cidrv4: "טווח IPv4",
-    cidrv6: "טווח IPv6",
-    base64: "מחרוזת בבסיס 64",
-    base64url: "מחרוזת בבסיס 64 לכתובות רשת",
-    json_string: "מחרוזת JSON",
-    e164: "מספר E.164",
-    jwt: "JWT",
-    template_literal: "קלט"
+    regex: {
+      label: "קלט",
+      gender: "m"
+    },
+    email: {
+      label: "כתובת אימייל",
+      gender: "f"
+    },
+    url: {
+      label: "כתובת רשת",
+      gender: "f"
+    },
+    emoji: {
+      label: "אימוג'י",
+      gender: "m"
+    },
+    uuid: {
+      label: "UUID",
+      gender: "m"
+    },
+    nanoid: {
+      label: "nanoid",
+      gender: "m"
+    },
+    guid: {
+      label: "GUID",
+      gender: "m"
+    },
+    cuid: {
+      label: "cuid",
+      gender: "m"
+    },
+    cuid2: {
+      label: "cuid2",
+      gender: "m"
+    },
+    ulid: {
+      label: "ULID",
+      gender: "m"
+    },
+    xid: {
+      label: "XID",
+      gender: "m"
+    },
+    ksuid: {
+      label: "KSUID",
+      gender: "m"
+    },
+    datetime: {
+      label: "תאריך וזמן ISO",
+      gender: "m"
+    },
+    date: {
+      label: "תאריך ISO",
+      gender: "m"
+    },
+    time: {
+      label: "זמן ISO",
+      gender: "m"
+    },
+    duration: {
+      label: "משך זמן ISO",
+      gender: "m"
+    },
+    ipv4: {
+      label: "כתובת IPv4",
+      gender: "f"
+    },
+    ipv6: {
+      label: "כתובת IPv6",
+      gender: "f"
+    },
+    cidrv4: {
+      label: "טווח IPv4",
+      gender: "m"
+    },
+    cidrv6: {
+      label: "טווח IPv6",
+      gender: "m"
+    },
+    base64: {
+      label: "מחרוזת בבסיס 64",
+      gender: "f"
+    },
+    base64url: {
+      label: "מחרוזת בבסיס 64 לכתובות רשת",
+      gender: "f"
+    },
+    json_string: {
+      label: "מחרוזת JSON",
+      gender: "f"
+    },
+    e164: {
+      label: "מספר E.164",
+      gender: "m"
+    },
+    jwt: {
+      label: "JWT",
+      gender: "m"
+    },
+    ends_with: {
+      label: "קלט",
+      gender: "m"
+    },
+    includes: {
+      label: "קלט",
+      gender: "m"
+    },
+    lowercase: {
+      label: "קלט",
+      gender: "m"
+    },
+    starts_with: {
+      label: "קלט",
+      gender: "m"
+    },
+    uppercase: {
+      label: "קלט",
+      gender: "m"
+    }
   };
   return (issue2) => {
     switch (issue2.code) {
-      case "invalid_type":
-        return `קלט לא תקין: צריך ${issue2.expected}, התקבל ${parsedType8(issue2.input)}`;
-      // return `Invalid input: expected ${issue.expected}, received ${util.getParsedType(issue.input)}`;
-      case "invalid_value":
-        if (issue2.values.length === 1) return `קלט לא תקין: צריך ${stringifyPrimitive(issue2.values[0])}`;
-        return `קלט לא תקין: צריך אחת מהאפשרויות  ${joinValues(issue2.values, "|")}`;
+      case "invalid_type": {
+        const expectedKey = issue2.expected;
+        const expected = typeLabel(expectedKey);
+        const receivedKey = parsedType8(issue2.input);
+        const received = TypeNames[receivedKey]?.label ?? receivedKey;
+        return `קלט לא תקין: צריך להיות ${expected}, התקבל ${received}`;
+      }
+      case "invalid_value": {
+        if (issue2.values.length === 1) {
+          return `ערך לא תקין: הערך חייב להיות ${stringifyPrimitive(issue2.values[0])}`;
+        }
+        const stringified = issue2.values.map((v) => stringifyPrimitive(v));
+        if (issue2.values.length === 2) {
+          return `ערך לא תקין: האפשרויות המתאימות הן ${stringified[0]} או ${stringified[1]}`;
+        }
+        const lastValue = stringified[stringified.length - 1];
+        const restValues = stringified.slice(0, -1).join(", ");
+        return `ערך לא תקין: האפשרויות המתאימות הן ${restValues} או ${lastValue}`;
+      }
       case "too_big": {
-        const adj = issue2.inclusive ? "<=" : "<";
         const sizing = getSizing(issue2.origin);
-        if (sizing) return `גדול מדי: ${issue2.origin ?? "value"} צריך להיות ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "elements"}`;
-        return `גדול מדי: ${issue2.origin ?? "value"} צריך להיות ${adj}${issue2.maximum.toString()}`;
+        const subject = withDefinite(issue2.origin ?? "value");
+        if (issue2.origin === "string") {
+          return `${sizing?.longLabel ?? "ארוך"} מדי: ${subject} צריכה להכיל ${issue2.maximum.toString()} ${sizing?.unit ?? ""} ${issue2.inclusive ? "או פחות" : "לכל היותר"}`.trim();
+        }
+        if (issue2.origin === "number") {
+          const comparison = issue2.inclusive ? `קטן או שווה ל-${issue2.maximum}` : `קטן מ-${issue2.maximum}`;
+          return `גדול מדי: ${subject} צריך להיות ${comparison}`;
+        }
+        if (issue2.origin === "array" || issue2.origin === "set") {
+          const verb = issue2.origin === "set" ? "צריכה" : "צריך";
+          const comparison = issue2.inclusive ? `${issue2.maximum} ${sizing?.unit ?? ""} או פחות` : `פחות מ-${issue2.maximum} ${sizing?.unit ?? ""}`;
+          return `גדול מדי: ${subject} ${verb} להכיל ${comparison}`.trim();
+        }
+        const adj = issue2.inclusive ? "<=" : "<";
+        const be = verbFor(issue2.origin ?? "value");
+        if (sizing?.unit) {
+          return `${sizing.longLabel} מדי: ${subject} ${be} ${adj}${issue2.maximum.toString()} ${sizing.unit}`;
+        }
+        return `${sizing?.longLabel ?? "גדול"} מדי: ${subject} ${be} ${adj}${issue2.maximum.toString()}`;
       }
       case "too_small": {
-        const adj = issue2.inclusive ? ">=" : ">";
         const sizing = getSizing(issue2.origin);
-        if (sizing) {
-          return `קטן מדי: ${issue2.origin} צריך להיות ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        const subject = withDefinite(issue2.origin ?? "value");
+        if (issue2.origin === "string") {
+          return `${sizing?.shortLabel ?? "קצר"} מדי: ${subject} צריכה להכיל ${issue2.minimum.toString()} ${sizing?.unit ?? ""} ${issue2.inclusive ? "או יותר" : "לפחות"}`.trim();
         }
-        return `קטן מדי: ${issue2.origin} צריך להיות ${adj}${issue2.minimum.toString()}`;
+        if (issue2.origin === "number") {
+          const comparison = issue2.inclusive ? `גדול או שווה ל-${issue2.minimum}` : `גדול מ-${issue2.minimum}`;
+          return `קטן מדי: ${subject} צריך להיות ${comparison}`;
+        }
+        if (issue2.origin === "array" || issue2.origin === "set") {
+          const verb = issue2.origin === "set" ? "צריכה" : "צריך";
+          if (issue2.minimum === 1 && issue2.inclusive) {
+            const singularPhrase = issue2.origin === "set" ? "לפחות פריט אחד" : "לפחות פריט אחד";
+            return `קטן מדי: ${subject} ${verb} להכיל ${singularPhrase}`;
+          }
+          const comparison = issue2.inclusive ? `${issue2.minimum} ${sizing?.unit ?? ""} או יותר` : `יותר מ-${issue2.minimum} ${sizing?.unit ?? ""}`;
+          return `קטן מדי: ${subject} ${verb} להכיל ${comparison}`.trim();
+        }
+        const adj = issue2.inclusive ? ">=" : ">";
+        const be = verbFor(issue2.origin ?? "value");
+        if (sizing?.unit) {
+          return `${sizing.shortLabel} מדי: ${subject} ${be} ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        }
+        return `${sizing?.shortLabel ?? "קטן"} מדי: ${subject} ${be} ${adj}${issue2.minimum.toString()}`;
       }
       case "invalid_format": {
         const _issue = issue2;
-        if (_issue.format === "starts_with") return `מחרוזת לא תקינה: חייבת להתחיל ב"${_issue.prefix}"`;
-        if (_issue.format === "ends_with") return `מחרוזת לא תקינה: חייבת להסתיים ב "${_issue.suffix}"`;
-        if (_issue.format === "includes") return `מחרוזת לא תקינה: חייבת לכלול "${_issue.includes}"`;
-        if (_issue.format === "regex") return `מחרוזת לא תקינה: חייבת להתאים לתבנית ${_issue.pattern}`;
-        return `${Nouns[_issue.format] ?? issue2.format} לא תקין`;
+        if (_issue.format === "starts_with") return `המחרוזת חייבת להתחיל ב "${_issue.prefix}"`;
+        if (_issue.format === "ends_with") return `המחרוזת חייבת להסתיים ב "${_issue.suffix}"`;
+        if (_issue.format === "includes") return `המחרוזת חייבת לכלול "${_issue.includes}"`;
+        if (_issue.format === "regex") return `המחרוזת חייבת להתאים לתבנית ${_issue.pattern}`;
+        const nounEntry = Nouns[_issue.format];
+        const noun = nounEntry?.label ?? _issue.format;
+        const gender = nounEntry?.gender ?? "m";
+        const adjective = gender === "f" ? "תקינה" : "תקין";
+        return `${noun} לא ${adjective}`;
       }
       case "not_multiple_of":
         return `מספר לא תקין: חייב להיות מכפלה של ${issue2.divisor}`;
       case "unrecognized_keys":
         return `מפתח${issue2.keys.length > 1 ? "ות" : ""} לא מזוה${issue2.keys.length > 1 ? "ים" : "ה"}: ${joinValues(issue2.keys, ", ")}`;
-      case "invalid_key":
-        return `מפתח לא תקין ב${issue2.origin}`;
+      case "invalid_key": {
+        return `שדה לא תקין באובייקט`;
+      }
       case "invalid_union":
         return "קלט לא תקין";
-      case "invalid_element":
-        return `ערך לא תקין ב${issue2.origin}`;
+      case "invalid_element": {
+        const place = withDefinite(issue2.origin ?? "array");
+        return `ערך לא תקין ב${place}`;
+      }
       default:
         return `קלט לא תקין`;
     }
@@ -7729,16 +7997,20 @@ function ms_default() {
 var error28 = () => {
   const Sizable = {
     string: {
-      unit: "tekens"
+      unit: "tekens",
+      verb: "te hebben"
     },
     file: {
-      unit: "bytes"
+      unit: "bytes",
+      verb: "te hebben"
     },
     array: {
-      unit: "elementen"
+      unit: "elementen",
+      verb: "te hebben"
     },
     set: {
-      unit: "elementen"
+      unit: "elementen",
+      verb: "te hebben"
     }
   };
   function getSizing(origin) {
@@ -7804,16 +8076,16 @@ var error28 = () => {
       case "too_big": {
         const adj = issue2.inclusive ? "<=" : "<";
         const sizing = getSizing(issue2.origin);
-        if (sizing) return `Te lang: verwacht dat ${issue2.origin ?? "waarde"} ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "elementen"} bevat`;
-        return `Te lang: verwacht dat ${issue2.origin ?? "waarde"} ${adj}${issue2.maximum.toString()} is`;
+        if (sizing) return `Te groot: verwacht dat ${issue2.origin ?? "waarde"} ${sizing.verb} ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "elementen"}`;
+        return `Te groot: verwacht dat ${issue2.origin ?? "waarde"} ${adj}${issue2.maximum.toString()} is`;
       }
       case "too_small": {
         const adj = issue2.inclusive ? ">=" : ">";
         const sizing = getSizing(issue2.origin);
         if (sizing) {
-          return `Te kort: verwacht dat ${issue2.origin} ${adj}${issue2.minimum.toString()} ${sizing.unit} bevat`;
+          return `Te klein: verwacht dat ${issue2.origin} ${sizing.verb} ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
         }
-        return `Te kort: verwacht dat ${issue2.origin} ${adj}${issue2.minimum.toString()} is`;
+        return `Te klein: verwacht dat ${issue2.origin} ${adj}${issue2.minimum.toString()} is`;
       }
       case "invalid_format": {
         const _issue = issue2;
@@ -10006,6 +10278,7 @@ function yo_default() {
 }
 
 // node_modules/zod/v4/core/registries.js
+var _a;
 var $output = Symbol("ZodOutput");
 var $input = Symbol("ZodInput");
 var $ZodRegistry = class {
@@ -10014,13 +10287,13 @@ var $ZodRegistry = class {
     this._idmap = /* @__PURE__ */ new Map();
   }
   add(schema, ..._meta) {
-    const meta = _meta[0];
-    this._map.set(schema, meta);
-    if (meta && typeof meta === "object" && "id" in meta) {
-      if (this._idmap.has(meta.id)) {
-        throw new Error(`ID ${meta.id} already exists in the registry`);
+    const meta3 = _meta[0];
+    this._map.set(schema, meta3);
+    if (meta3 && typeof meta3 === "object" && "id" in meta3) {
+      if (this._idmap.has(meta3.id)) {
+        throw new Error(`ID ${meta3.id} already exists in the registry`);
       }
-      this._idmap.set(meta.id, schema);
+      this._idmap.set(meta3.id, schema);
     }
     return this;
   }
@@ -10030,9 +10303,9 @@ var $ZodRegistry = class {
     return this;
   }
   remove(schema) {
-    const meta = this._map.get(schema);
-    if (meta && typeof meta === "object" && "id" in meta) {
-      this._idmap.delete(meta.id);
+    const meta3 = this._map.get(schema);
+    if (meta3 && typeof meta3 === "object" && "id" in meta3) {
+      this._idmap.delete(meta3.id);
     }
     this._map.delete(schema);
     return this;
@@ -10054,7 +10327,8 @@ var $ZodRegistry = class {
 function registry() {
   return new $ZodRegistry();
 }
-var globalRegistry = registry();
+(_a = globalThis).__zod_globalRegistry ?? (_a.__zod_globalRegistry = registry());
+var globalRegistry = globalThis.__zod_globalRegistry;
 
 // node_modules/zod/v4/core/api.js
 function _string(Class2, params) {
@@ -10195,6 +10469,14 @@ function _ipv6(Class2, params) {
   return new Class2(__spreadValues({
     type: "string",
     format: "ipv6",
+    check: "string_format",
+    abort: false
+  }, normalizeParams(params)));
+}
+function _mac(Class2, params) {
+  return new Class2(__spreadValues({
+    type: "string",
+    format: "mac",
     check: "string_format",
     abort: false
   }, normalizeParams(params)));
@@ -10597,6 +10879,9 @@ function _toLowerCase() {
 function _toUpperCase() {
   return _overwrite((input) => input.toUpperCase());
 }
+function _slugify() {
+  return _overwrite((input) => slugify(input));
+}
 function _array(Class2, element, params) {
   return new Class2(__spreadValues({
     type: "array",
@@ -10798,6 +11083,32 @@ function _check(fn, params) {
   ch._zod.check = fn;
   return ch;
 }
+function describe(description) {
+  const ch = new $ZodCheck({
+    check: "describe"
+  });
+  ch._zod.onattach = [(inst) => {
+    const existing = globalRegistry.get(inst) ?? {};
+    globalRegistry.add(inst, __spreadProps(__spreadValues({}, existing), {
+      description
+    }));
+  }];
+  ch._zod.check = () => {
+  };
+  return ch;
+}
+function meta(metadata) {
+  const ch = new $ZodCheck({
+    check: "meta"
+  });
+  ch._zod.onattach = [(inst) => {
+    const existing = globalRegistry.get(inst) ?? {};
+    globalRegistry.add(inst, __spreadValues(__spreadValues({}, existing), metadata));
+  }];
+  ch._zod.check = () => {
+  };
+  return ch;
+}
 function _stringbool(Classes, _params) {
   const params = normalizeParams(_params);
   let truthyArray = params.truthy ?? ["true", "1", "yes", "on", "y", "enabled"];
@@ -10884,7 +11195,7 @@ var JSONSchemaGenerator = class {
     path: [],
     schemaPath: []
   }) {
-    var _a;
+    var _a2;
     const def = schema._zod.def;
     const formatMap = {
       guid: "uuid",
@@ -11103,10 +11414,15 @@ var JSONSchemaGenerator = class {
           }
           case "union": {
             const json2 = _json;
+            const isDiscriminated = def.discriminator !== void 0;
             const options = def.options.map((x, i) => this.process(x, __spreadProps(__spreadValues({}, params), {
-              path: [...params.path, "anyOf", i]
+              path: [...params.path, isDiscriminated ? "oneOf" : "anyOf", i]
             })));
-            json2.anyOf = options;
+            if (isDiscriminated) {
+              json2.oneOf = options;
+            } else {
+              json2.anyOf = options;
+            }
             break;
           }
           case "intersection": {
@@ -11377,13 +11693,13 @@ var JSONSchemaGenerator = class {
         }
       }
     }
-    const meta = this.metadataRegistry.get(schema);
-    if (meta) Object.assign(result.schema, meta);
+    const meta3 = this.metadataRegistry.get(schema);
+    if (meta3) Object.assign(result.schema, meta3);
     if (this.io === "input" && isTransforming(schema)) {
       delete result.schema.examples;
       delete result.schema.default;
     }
-    if (this.io === "input" && result.schema._prefault) (_a = result.schema).default ?? (_a.default = result.schema._prefault);
+    if (this.io === "input" && result.schema._prefault) (_a2 = result.schema).default ?? (_a2.default = result.schema._prefault);
     delete result.schema._prefault;
     const _result = this.seen.get(schema);
     return _result.schema;
@@ -11596,98 +11912,43 @@ function isTransforming(_schema, _ctx) {
   };
   if (ctx.seen.has(_schema)) return false;
   ctx.seen.add(_schema);
-  const schema = _schema;
-  const def = schema._zod.def;
-  switch (def.type) {
-    case "string":
-    case "number":
-    case "bigint":
-    case "boolean":
-    case "date":
-    case "symbol":
-    case "undefined":
-    case "null":
-    case "any":
-    case "unknown":
-    case "never":
-    case "void":
-    case "literal":
-    case "enum":
-    case "nan":
-    case "file":
-    case "template_literal":
-      return false;
-    case "array": {
-      return isTransforming(def.element, ctx);
-    }
-    case "object": {
-      for (const key in def.shape) {
-        if (isTransforming(def.shape[key], ctx)) return true;
-      }
-      return false;
-    }
-    case "union": {
-      for (const option of def.options) {
-        if (isTransforming(option, ctx)) return true;
-      }
-      return false;
-    }
-    case "intersection": {
-      return isTransforming(def.left, ctx) || isTransforming(def.right, ctx);
-    }
-    case "tuple": {
-      for (const item of def.items) {
-        if (isTransforming(item, ctx)) return true;
-      }
-      if (def.rest && isTransforming(def.rest, ctx)) return true;
-      return false;
-    }
-    case "record": {
-      return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
-    }
-    case "map": {
-      return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
-    }
-    case "set": {
-      return isTransforming(def.valueType, ctx);
-    }
-    // inner types
-    case "promise":
-    case "optional":
-    case "nonoptional":
-    case "nullable":
-    case "readonly":
-      return isTransforming(def.innerType, ctx);
-    case "lazy":
-      return isTransforming(def.getter(), ctx);
-    case "default": {
-      return isTransforming(def.innerType, ctx);
-    }
-    case "prefault": {
-      return isTransforming(def.innerType, ctx);
-    }
-    case "custom": {
-      return false;
-    }
-    case "transform": {
-      return true;
-    }
-    case "pipe": {
-      return isTransforming(def.in, ctx) || isTransforming(def.out, ctx);
-    }
-    case "success": {
-      return false;
-    }
-    case "catch": {
-      return false;
-    }
-    case "function": {
-      return false;
-    }
-    default:
-      def;
+  const def = _schema._zod.def;
+  if (def.type === "transform") return true;
+  if (def.type === "array") return isTransforming(def.element, ctx);
+  if (def.type === "set") return isTransforming(def.valueType, ctx);
+  if (def.type === "lazy") return isTransforming(def.getter(), ctx);
+  if (def.type === "promise" || def.type === "optional" || def.type === "nonoptional" || def.type === "nullable" || def.type === "readonly" || def.type === "default" || def.type === "prefault") {
+    return isTransforming(def.innerType, ctx);
   }
-  throw new Error(`Unknown schema type: ${def.type}`);
+  if (def.type === "intersection") {
+    return isTransforming(def.left, ctx) || isTransforming(def.right, ctx);
+  }
+  if (def.type === "record" || def.type === "map") {
+    return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
+  }
+  if (def.type === "pipe") {
+    return isTransforming(def.in, ctx) || isTransforming(def.out, ctx);
+  }
+  if (def.type === "object") {
+    for (const key in def.shape) {
+      if (isTransforming(def.shape[key], ctx)) return true;
+    }
+    return false;
+  }
+  if (def.type === "union") {
+    for (const option of def.options) {
+      if (isTransforming(option, ctx)) return true;
+    }
+    return false;
+  }
+  if (def.type === "tuple") {
+    for (const item of def.items) {
+      if (isTransforming(item, ctx)) return true;
+    }
+    if (def.rest && isTransforming(def.rest, ctx)) return true;
+    return false;
+  }
+  return false;
 }
 
 // node_modules/zod/v4/core/json-schema.js
@@ -11811,8 +12072,8 @@ var ZodType = $constructor("ZodType", (inst, def) => {
   };
   inst.clone = (def2, params) => clone(inst, def2, params);
   inst.brand = () => inst;
-  inst.register = (reg, meta) => {
-    reg.add(inst, meta);
+  inst.register = (reg, meta3) => {
+    reg.add(inst, meta3);
     return inst;
   };
   inst.parse = (data, params) => parse2(inst, data, params, {
@@ -11906,6 +12167,7 @@ var _ZodString = $constructor("_ZodString", (inst, def) => {
   inst.normalize = (...args) => inst.check(_normalize(...args));
   inst.toLowerCase = () => inst.check(_toLowerCase());
   inst.toUpperCase = () => inst.check(_toUpperCase());
+  inst.slugify = () => inst.check(_slugify());
 });
 var ZodString = $constructor("ZodString", (inst, def) => {
   $ZodString.init(inst, def);
@@ -12043,6 +12305,13 @@ var ZodIPv4 = $constructor("ZodIPv4", (inst, def) => {
 });
 function ipv42(params) {
   return _ipv4(ZodIPv4, params);
+}
+var ZodMAC = $constructor("ZodMAC", (inst, def) => {
+  $ZodMAC.init(inst, def);
+  ZodStringFormat.init(inst, def);
+});
+function mac2(params) {
+  return _mac(ZodMAC, params);
 }
 var ZodIPv6 = $constructor("ZodIPv6", (inst, def) => {
   $ZodIPv6.init(inst, def);
@@ -12742,6 +13011,8 @@ function refine(fn, _params = {}) {
 function superRefine(fn) {
   return _superRefine(fn);
 }
+var describe2 = describe;
+var meta2 = meta;
 function _instanceof(cls, params = {
   error: `Input not instance of ${cls.name}`
 }) {
@@ -12870,6 +13141,7 @@ export {
   ZodKSUID,
   ZodLazy,
   ZodLiteral,
+  ZodMAC,
   ZodMap,
   ZodNaN,
   ZodNanoID,
@@ -12929,6 +13201,7 @@ export {
   decode2 as decode,
   decodeAsync2 as decodeAsync,
   zod_default as default,
+  describe2 as describe,
   discriminatedUnion,
   e1642 as e164,
   email2 as email,
@@ -12973,9 +13246,11 @@ export {
   _lowercase as lowercase,
   _lt as lt,
   _lte as lte,
+  mac2 as mac,
   map,
   _maxLength as maxLength,
   _maxSize as maxSize,
+  meta2 as meta,
   _mime as mime,
   _minLength as minLength,
   _minSize as minSize,
@@ -13021,6 +13296,7 @@ export {
   set,
   setErrorMap,
   _size as size,
+  _slugify as slugify,
   _startsWith as startsWith,
   strictObject,
   string2 as string,

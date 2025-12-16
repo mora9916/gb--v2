@@ -144,6 +144,7 @@ cypress/support/
 
 # Carpetas eliminadas del repositorio pero mantenidas localmente
 01.Retos/
+02.Project/
 03.Video/
 04.Documentacion/
 README.md
