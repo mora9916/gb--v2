@@ -1,5 +1,5 @@
 <div class="relative">
-  <div class="z-[100] gb-bg-color shadow-lg border-b border-[rgb(185,156,55)] flex flex-wrap md:flex-nowrap sticky top-0 px-4 py-2">
+  <div class="z-100 gb-bg-color shadow-lg border-b border-[rgb(185,156,55)] flex flex-wrap md:flex-nowrap sticky top-0 px-4 py-2">
     
     <div class="w-full md:w-1/6 flex items-center justify-center md:justify-start mb-2 md:mb-0">
       <a routerLink="/">
@@ -28,7 +28,7 @@
       </div>
 
       @if (searchProductForm.get('q')?.value && searchProductForm.get('q')?.value!.length > 0) {
-      <div class="absolute top-full mt-1 bg-neutral-800 border border-[rgb(185,156,55)] w-full max-w-3xl shadow-2xl z-[110] rounded-b-lg overflow-hidden">
+      <div class="absolute top-full mt-1 bg-neutral-800 border border-[rgb(185,156,55)] w-full max-w-3xl shadow-2xl z-110 rounded-b-lg overflow-hidden">
         <div class="w-full max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-yellow-600">
           @if (products$ | async; as products ) {
           <div class="flex flex-col gap-1">

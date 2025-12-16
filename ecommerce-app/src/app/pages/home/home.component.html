@@ -110,13 +110,24 @@
 <div class="relative w-full">
   <app-image-banner></app-image-banner>
 </div>
+<h1 class="text-2xl md:text-5xl lg:text-6xl text-center mb-6 px-4 font-serif tracking-tight leading-tight">
+    Todo lo necesario para ser un PRO
+  </h1>
+<div class="relative w-5/6 mx-auto my-10">
+  <app-images-section 
+    [cards]="misCategorias" 
+    type="category">
+  </app-images-section>
+</div>
 <div class="relative h-50 w-5/6 mx-auto flex items-end justify-center pb-4 mb-8 title-section">
-  <h1 class="text-5xl text-center mb-4">Todo lo que necesitas para ser PRO</h1>
+  <h1 class="text-2xl md:text-5xl lg:text-6xl text-center mb-6 px-4 font-serif tracking-tight leading-tight">
+    Ofreciendo siempre lo mejor
+  </h1>
 </div>
 <div class="relative w-5/6 mx-auto my-18">
-  <app-images-section [cards]="misCategorias"></app-images-section>
-</div>
-<div class="relative w-5/6 mx-auto my-18">
-  <app-images-section [cards]="misServicios"></app-images-section>
+  <app-images-section 
+    [cards]="misServicios" 
+    type="service">
+  </app-images-section>
 </div>
 <app-footer></app-footer>

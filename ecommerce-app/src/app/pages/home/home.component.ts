@@ -42,16 +42,16 @@ export class HomeComponent {
   })
  
   misCategorias = [
-    { img: 'images/categories/playing-cues.png', title: 'Cues' },
-    { img: 'images/categories/cue-cases.png', title: 'Cue Cases' },
-    { img: 'images/categories/gloves.png', title: 'Gloves' },
-    { img: 'images/categories/accesories.png', title: 'Accesories' },
+    { img: 'images/categories/playing-cues.png', title: 'Tacos de billar' },
+    { img: 'images/categories/cue-cases.png', title: 'Estuches' },
+    { img: 'images/categories/gloves.png', title: 'Guantes' },
+    { img: 'images/categories/accesories.png', title: 'Bolas y Ruedos completos' },
   ];
 
   misServicios = [
-    { img: 'images/categories/playing-cues.png', title: 'Cues' },
-    { img: 'images/categories/cue-cases.png', title: 'Cue Cases' },
-    { img: 'images/categories/gloves.png', title: 'Gloves' },
+    { img: 'icons/apoyo.png', title: 'Atención 24/7' },
+    { img: 'icons/caja.png', title: 'Envío Express' },
+    { img: 'icons/calidad.png', title: 'Calidad Garantizada' },
   ]
 
 }
