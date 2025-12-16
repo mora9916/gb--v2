@@ -141,3 +141,9 @@ vite.config.ts.timestamp-*
 .DS_Store
 cypress/screenshots/
 cypress/support/
+
+# Carpetas eliminadas del repositorio pero mantenidas localmente
+01.Retos/
+03.Video/
+04.Documentacion/
+README.md
