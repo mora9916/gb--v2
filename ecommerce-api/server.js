@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose'; // <-- Asegúrate de tener este import
 import routes from './src/routes/index.js';
 import dbConnection from './src/config/database.js';
 import logger from './src/middlewares/logger.js';
@@ -12,13 +13,20 @@ dotenv.config();
 setupGlobalErrorHandlers();
 
 const app = express();
+
+// DECLARACIÓN DEL PUERTO (Esto es lo que faltaba)
+const PORT = process.env.PORT || 3000;
+
 dbConnection();
 
+// Este bloque de mongoose.connect ya suele estar dentro de dbConnection()
+// Si dbConnection() ya conecta, puedes borrar estas líneas. 
+// Si no, asegúrate de tener el import de mongoose arriba.
 mongoose.connect(process.env.MONGO_URI, {
-  dbName: 'gb_database' // <--- Esto fuerza el uso de tu nombre aunque la URI no lo traiga
-})
+  dbName: 'gb_database'
+}).then(() => console.log("Conectado a gb_database"))
+  .catch(err => console.error("Error de conexión:", err));
 
-// === INICIO DEL CORS ===
 app.use(cors({
     origin: [
       process.env.FRONT_APP_URL, 
@@ -50,10 +58,7 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-// app.listen(process.env.PORT, () => {
-//   console.log(`Server running on http://localhost:${process.env.PORT}`);
-// });
-
+// LA SOLUCIÓN AL PORT BINDING
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
-})
+});
