@@ -6,11 +6,12 @@ import { ProductosSelectedComponent } from '../../components/products/productos-
 import { RouterLink } from "@angular/router";
 import { ImageBannerComponent } from '../../components/shared/image-banner/image-banner.component';
 import { ImagesSectionComponent } from '../../components/shared/images-section/images-section.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CarouselComponent, SearchProductsComponent, ProductosSelectedComponent, ImagesSectionComponent, ImageBannerComponent, RouterLink],
+  imports: [CarouselComponent, SearchProductsComponent, ProductosSelectedComponent, ImagesSectionComponent, ImageBannerComponent, FooterComponent,RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
