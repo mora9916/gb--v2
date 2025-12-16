@@ -148,3 +148,5 @@ cypress/support/
 03.Video/
 04.Documentacion/
 README.md
+
+.env
