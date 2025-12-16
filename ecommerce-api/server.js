@@ -14,6 +14,10 @@ setupGlobalErrorHandlers();
 const app = express();
 dbConnection();
 
+mongoose.connect(process.env.MONGO_URI, {
+  dbName: 'gb_database' // <--- Esto fuerza el uso de tu nombre aunque la URI no lo traiga
+})
+
 // === INICIO DEL CORS ===
 app.use(cors({
     origin: [
