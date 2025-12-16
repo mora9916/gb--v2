@@ -6,7 +6,6 @@ import logger from './src/middlewares/logger.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import setupGlobalErrorHandlers from './src/middlewares/globalErrorHandler.js';
 import cors from 'cors';
-import initializeData from './src/config/initializeData.js';
 
 dotenv.config();
 
@@ -14,10 +13,14 @@ setupGlobalErrorHandlers();
 
 const app = express();
 dbConnection();
-console.log("CORS ORIGIN:", process.env.FRONT_APP_URL);
-app.use(
-  cors({
-    origin: process.env.FRONT_APP_URL,
+
+// === INICIO DEL CORS ===
+app.use(cors({
+    origin: [
+      process.env.FRONT_APP_URL, 
+      "http://localhost:5173",
+      "https://goldenbreak.com.mx",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
     optionsSuccessStatus: 200,
@@ -40,11 +43,6 @@ app.use((req, res) => {
     url: req.originalUrl
   });
 });
-
-// if (process.env.INITIAL_DATA === "development") {
-//   console.log("Development environment, creating mocking data...");
-//   initializeData();
-// }
 
 app.use(errorHandler);
 
