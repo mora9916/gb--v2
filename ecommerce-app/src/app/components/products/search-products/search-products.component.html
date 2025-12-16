@@ -1,78 +1,53 @@
-  <div class="relative">
-  <div class="z-100 gb-bg-color shadow-lg border-b border-[rgb(185,156,55)] flex sticky top-0">
-    <div class="w-1/7 flex items-center justify-end">
+<div class="relative">
+  <div class="z-[100] gb-bg-color shadow-lg border-b border-[rgb(185,156,55)] flex flex-wrap md:flex-nowrap sticky top-0 px-4 py-2">
+    
+    <div class="w-full md:w-1/6 flex items-center justify-center md:justify-start mb-2 md:mb-0">
       <a routerLink="/">
-        <img src="IMG/logo/logo_Golden_Break.png" class="w-40" alt="Golden Break Logo">
+        <img src="IMG/logo/logo_Golden_Break.png" class="w-32 md:w-40" alt="Golden Break Logo">
       </a>
     </div>
-    <div class="w-5/7 shrink-0 flex flex-col items-center justify-center">
+
+    <div class="w-full md:w-4/6 shrink-0 flex flex-col items-center justify-center">
       <div class="relative w-full flex max-w-3xl">
-        <form [formGroup]="searchProductForm" class="flex gap-2 items-center">
+        <form [formGroup]="searchProductForm" class="flex-1 flex gap-0 items-center">
           <div class="flex-1 relative">
             <input
               type="text"
               formControlName="q"
               placeholder="¿Qué estás buscando hoy?..."
-              class="w-3xl input-buscador px-4 py-3 bg-neutral-800 rounded-l-sm placeholder:italic placeholder:text-gray-300 focus:ring-2 focus:ring-[rgb(185,156,55)] focus:bg-neutral-700 text-lg"
+              class="w-full input-buscador px-4 py-3 bg-neutral-800 rounded-l-sm placeholder:italic placeholder:text-gray-300 focus:ring-2 focus:ring-[rgb(185,156,55)] focus:bg-neutral-700 text-base md:text-lg text-white"
             />
           </div>
-          <!--div class="flex gap-2 items-center bg-amber-500">
-            <span class="text-sm text-gray-600 hidden md:block">Precio</span>
-            <input
-              type="number"
-              formControlName="minPrice"
-              placeholder="Min"
-              class="w-20 px-2 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 text-sm"
-            />
-            <span class="text-gray-400">-</span>
-            <input
-              type="number"
-              formControlName="maxPrice"
-              placeholder="Max"
-              class="w-20 px-2 py-3 border border-gray-300 focus:ring-2 focus:ring-orange-500 text-sm"
-            />
-          </div-->
         </form>
         <button
-          class="bg-[rgb(185,156,55)] input-buscador hover:bg-[rgb(160,127,6)] text-white px-4 py-3 rounded-r-lg cursor-pointer shadow-lg transition-all duration-200">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z"
-            />
+          class="bg-[rgb(185,156,55)] hover:bg-[rgb(160,127,6)] text-white px-4 py-3 rounded-r-lg cursor-pointer shadow-lg transition-all duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
           </svg>
         </button>
       </div>
-      @if (searchProductForm.get('q')?.value &&
-      searchProductForm.get('q')?.value!.length>0) {
-      <div class="fixed resultados bg-neutral-700 border border-[rgb(185,156,55)] w-full max-w-3xl flex h-auto">
-        <div class="w-full p-4 z-100">
+
+      @if (searchProductForm.get('q')?.value && searchProductForm.get('q')?.value!.length > 0) {
+      <div class="absolute top-full mt-1 bg-neutral-800 border border-[rgb(185,156,55)] w-full max-w-3xl shadow-2xl z-[110] rounded-b-lg overflow-hidden">
+        <div class="w-full max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-yellow-600">
           @if (products$ | async; as products ) {
-          <div class="z-100 w-max-full">
+          <div class="flex flex-col gap-1">
             @for (product of products; track $index) {
-            <div class="flex w-max-full items-center gap-3 p-2 hover:bg-neutral-600 rounded cursor-pointer">
-              <div class="w-30 h-30 bg-gray-200 rounded shrink-0">
+            <div class="flex items-center gap-3 p-2 hover:bg-neutral-700 rounded transition-colors cursor-pointer group">
+              <div class="w-16 h-16 md:w-20 md:h-20 bg-neutral-900 rounded shrink-0 overflow-hidden border border-neutral-600">
                 <img
                   [src]="product.imagesUrl"
                   [alt]="product.name"
-                  class="w-full h-full object-cover rounded"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform"
                 />
               </div>
               <div class="flex-1 min-w-0">
-                <h4 class="text-lg text-neutral-50 truncate font-bold">{{product.name}}</h4>
-                <p class="text-md text-neutral-50">$ {{product.price}} USD</p>
+                <h4 class="text-md md:text-lg text-neutral-50 truncate font-bold uppercase">{{product.name}}</h4>
+                <p class="text-sm md:text-md text-[rgb(185,156,55)] font-semibold">$ {{product.price}} USD</p>
               </div>
             </div>
             }@empty {
-              <div class="text-center py-4 text-neutral-50">
+              <div class="text-center py-6 text-neutral-400 italic">
                 No se encontraron productos
               </div>
             }
@@ -83,16 +58,15 @@
       }
     </div>
     
-    <div class="w-1/7 flex items-center justify-center">
-      
-    </div>
+    <div class="hidden md:flex w-1/6 items-center justify-center"></div>
   </div>
-  <nav>
-    <ul class="flex space-x-3 bg-neutral-800 max-w-full mx-auto">
-      <li><a routerLink="/">Inicio</a></li>
-      <li><a routerLink="/products">Productos</a></li>
-      <li><a routerLink="/about">Acerca de</a></li>
-      <li><a routerLink="/contact">Contacto</a></li>
+
+  <nav class="bg-neutral-900 border-b border-neutral-700">
+    <ul class="flex overflow-x-auto whitespace-nowrap space-x-6 px-6 py-3 max-w-7xl mx-auto scrollbar-hide">
+      <li><a routerLink="/" class="text-gray-300 hover:text-white transition uppercase text-sm font-medium">Inicio</a></li>
+      <li><a routerLink="/products" class="text-gray-300 hover:text-white transition uppercase text-sm font-medium">Productos</a></li>
+      <li><a routerLink="/about" class="text-gray-300 hover:text-white transition uppercase text-sm font-medium">Acerca de</a></li>
+      <li><a routerLink="/contact" class="text-gray-300 hover:text-white transition uppercase text-sm font-medium">Contacto</a></li>
     </ul>
   </nav>
 </div>
